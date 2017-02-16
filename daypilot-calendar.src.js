@@ -1459,6 +1459,7 @@ if (typeof DayPilot.Global === 'undefined') {
             inner.setAttribute("unselectable", "on");
             inner.className = calendar._prefixCssClass("_event_inner");
             inner.innerHTML = e.client.html();
+            inner.title = e.client.toolTip();
 
             if (data.borderColor) {
                 inner.style.borderColor = data.borderColor;
