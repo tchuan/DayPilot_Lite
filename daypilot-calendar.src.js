@@ -285,6 +285,7 @@ if (typeof DayPilot.Global === 'undefined') {
         this.cornerBackColor = "#F3F3F9";
         this.cssOnly = true;
         this.days = 1;
+        this.cellDuration = 15;
         this.durationBarVisible = true;
         this.eventBackColor = '#638EDE';
         this.eventBorderColor = "#2951A5";
@@ -625,7 +626,7 @@ if (typeof DayPilot.Global === 'undefined') {
         };
         
         this.rowCount = function() {
-            return 48;
+            return 60 / this.cellDuration * 24;
         };
         
         this._api2 = function() {
@@ -733,7 +734,7 @@ if (typeof DayPilot.Global === 'undefined') {
             if (border === 'top') {
                 var day = start.getDatePart();
                 var step = Math.floor((shadowTop - _startOffset) / calendar.cellHeight);
-                var minutes = step * 30;
+                var minutes = step * this.cellDuration;
                 var ts = minutes * 60 * 1000;
 
                 newStart = day.addTime(ts);
@@ -743,7 +744,7 @@ if (typeof DayPilot.Global === 'undefined') {
             else if (border === 'bottom') {
                 var day = end.getDatePart();
                 var step = Math.floor((shadowTop + shadowHeight - _startOffset) / calendar.cellHeight);
-                var minutes = step * 30;
+                var minutes = step * this.cellDuration;
                 var ts = minutes * 60 * 1000;
 
                 newStart = start;
@@ -837,7 +838,7 @@ if (typeof DayPilot.Global === 'undefined') {
             var _startOffset = 1;
             var step = Math.floor((shadowTop - _startOffset) / calendar.cellHeight);
             
-            var boxStart = step * 30 * 60 * 1000;
+            var boxStart = step * this.cellDuration * 60 * 1000;
             var start = e.start();
             var end = e.end();
             var day = new Date();
@@ -847,7 +848,7 @@ if (typeof DayPilot.Global === 'undefined') {
             }
             day.setTime(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()));
             
-            var startOffset = start.getTime() - (day.getTime() + start.getUTCHours() * 3600 *1000 + Math.floor(start.getUTCMinutes()/30)*30*60*1000 );
+            var startOffset = start.getTime() - (day.getTime() + start.getUTCHours() * 3600 *1000 + Math.floor(start.getUTCMinutes()/this.cellDuration)*this.cellDuration*60*1000 );
             var length = end.getTime() - start.getTime();
 
             var newColumn = this.columns[newColumnIndex];
@@ -1818,7 +1819,7 @@ if (typeof DayPilot.Global === 'undefined') {
         };
         
         this.createHourRow = function(table, i) {
-            var height = (this.cellHeight * 2);
+            var height = (this.cellHeight * 60 / this.cellDuration);
         
             var r = table.insertRow(-1);
             r.style.height = height + "px";
@@ -1919,15 +1920,16 @@ if (typeof DayPilot.Global === 'undefined') {
         };
         
         this.getScrollableHeight = function() {
+            var steps = 60 / this.cellDuration;
             switch (this.heightSpec) {
                 case "Full":
-                    return (24 * 2 * this.cellHeight);    
+                    return (24 * steps * this.cellHeight);    
                 case "BusinessHours":
                     var dHours = this.businessHoursSpan();
-                    return dHours * this.cellHeight * 2;
+                    return dHours * this.cellHeight * steps;
                 case "BusinessHoursNoScroll":
                     var dHours = this.businessHoursSpan();
-                    return dHours * this.cellHeight * 2;
+                    return dHours * this.cellHeight * steps;
                 default:
                     throw "DayPilot.Calendar: Unexpected 'heightSpec' value.";
                     
@@ -2113,7 +2115,7 @@ if (typeof DayPilot.Global === 'undefined') {
             var dates = [];
 
             var table = this.nav.main;
-            var step = 30 * 60 * 1000;
+            var step = this.cellDuration * 60 * 1000;
             var rowCount = this.rowCount();
 
             var columns = calendar.columns;
@@ -2958,7 +2960,7 @@ if (typeof DayPilot.Global === 'undefined') {
             
             startTicks = start.getTime();
             
-            var boxTicks = 30 * 60 * 1000;
+            var boxTicks = this.cellDuration * 60 * 1000;
             var topTicks = ticks - startTicks;
             var boxOffsetTicks = topTicks % boxTicks;
             
@@ -2981,7 +2983,7 @@ if (typeof DayPilot.Global === 'undefined') {
         };
         
         this.ticksToPixels = function(ticks) { 
-            return Math.floor( (this.cellHeight * ticks) / (1000 * 60 * 30) );
+            return Math.floor( (this.cellHeight * ticks) / (1000 * 60 * this.cellDuration) );
         };    
         
         this.prepareVariables = function() {
