@@ -2613,7 +2613,7 @@ if (typeof DayPilot.Global === 'undefined') {
             
             if (scrollpos === 'Auto') {
                 if (this.heightSpec === "BusinessHours") {
-                    scrollpos = 2 * this.cellHeight * this.businessBeginsHour;
+                    scrollpos = 60 / this.cellDuration * this.cellHeight * this.businessBeginsHour;
                 }
                 else {
                     scrollpos = 0;
@@ -3026,20 +3026,20 @@ if (typeof DayPilot.Global === 'undefined') {
 
         this._saveScrollHour = function() {
             var top = calendar.nav.scroll.scrollTop;
-            var pos = top / (2*calendar.cellHeight);
+            var pos = top / (60 / this.cellDuration * calendar.cellHeight);
             calendar._config.scrollHour = pos;
         };
 
         this._restoreScrollHour = function() {
             var scrollpos = 0;
             if (calendar._config.scrollHour) {
-                scrollpos = 2 * calendar.cellHeight * calendar._config.scrollHour;
+                scrollpos = 60 / this.cellDuration * calendar.cellHeight * calendar._config.scrollHour;
                 //calendar._config.scrollHour = null;
             }
             else {
                 if (calendar.initScrollPos === 'Auto') {
                     if (this.heightSpec === "BusinessHours") {
-                        scrollpos = 2 * this.cellHeight * this.businessBeginsHour;
+                        scrollpos = 60 / this.cellDuration * this.cellHeight * this.businessBeginsHour;
                     }
                     else {
                         scrollpos = 0;
